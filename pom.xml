@@ -34,6 +34,7 @@
     </repositories>
 
     <dependencies>
+        <!--Flink dependencies-->
         <dependency>
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-streaming-java</artifactId>
@@ -45,16 +46,10 @@
             <version>${flink.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <version>42.7.5</version>
-        </dependency>
-        <dependency>
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-connector-kafka</artifactId>
             <version>3.3.0-1.20</version>
         </dependency>
-
         <dependency>
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-connector-jdbc</artifactId>
@@ -66,12 +61,25 @@
             <artifactId>flink-connector-base</artifactId>
             <version>1.20.1</version>
         </dependency>
-
         <dependency>
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-shaded-guava</artifactId>
             <version>33.4.0-jre-20.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-json</artifactId>
+            <version>1.20.1</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!--Postgres dependencies-->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.7.5</version>
+        </dependency>
+        <!--Log4j dependencies-->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-slf4j-impl</artifactId>
@@ -90,14 +98,7 @@
             <version>${log4j.version}</version>
             <scope>runtime</scope>
         </dependency>
-
-        <dependency>
-            <groupId>org.apache.flink</groupId>
-            <artifactId>flink-json</artifactId>
-            <version>1.20.1</version>
-            <scope>provided</scope>
-        </dependency>
-
+        <!--Langchain dependencies-->
         <dependency>
             <groupId>dev.langchain4j</groupId>
             <artifactId>langchain4j-open-ai</artifactId>
@@ -108,7 +109,31 @@
             <artifactId>langchain4j</artifactId>
             <version>1.0.0-beta1</version>
         </dependency>
-
+        <!--JUnit dependencies-->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>5.12.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>5.12.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <version>5.12.0</version>
+            <scope>test</scope>
+        </dependency>
+        <!--Checkstyle dependency-->
+        <dependency>
+            <groupId>com.puppycrawl.tools</groupId>
+            <artifactId>checkstyle</artifactId>
+            <version>10.21.4</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -123,14 +148,11 @@
                 </configuration>
             </plugin>
 
-            <!-- We use the maven-shade plugin to create a fat jar that contains all necessary dependencies. -->
-            <!-- Change the value of <mainClass>...</mainClass> if your program entry point changes. -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>3.1.1</version>
                 <executions>
-                    <!-- Run shade goal on package phase -->
                     <execution>
                         <phase>package</phase>
                         <goals>
@@ -168,6 +190,43 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>3.6.0</version>
+                <configuration>
+                    <configLocation>checkstyle.xml</configLocation>
+                    <consoleOutput>true</consoleOutput>
+                    <failsOnError>true</failsOnError>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>validate</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
+
+    <!--Non ha nulla a che fare con la build, è solo per report-->
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>3.6.0</version>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>checkstyle</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+        </plugins>
+    </reporting>
 </project>

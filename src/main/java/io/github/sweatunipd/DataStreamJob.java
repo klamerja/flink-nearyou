@@ -16,6 +16,7 @@ import org.apache.flink.streaming.api.datastream.AsyncDataStream;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+
 import java.util.Properties;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -24,6 +25,7 @@ public class DataStreamJob {
 
   public static void main(String[] args) throws Exception {
     final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+    env.enableCheckpointing(60000);
     Properties props = new Properties();
     KafkaSource<GPSData> source =
         KafkaSource.<GPSData>builder()
@@ -31,7 +33,7 @@ public class DataStreamJob {
             .setProperties(props)
             .setTopics("gps-data")
             .setGroupId(UUID.randomUUID().toString())
-            .setStartingOffsets(OffsetsInitializer.earliest())
+            .setStartingOffsets(OffsetsInitializer.latest())
             .setValueOnlyDeserializer(new GPSDataDeserializationSchema())
             .build();
 
@@ -66,7 +68,11 @@ public class DataStreamJob {
 
     DataStream<Tuple2<Integer, String>> generatedAdvertisement =
         AsyncDataStream.unorderedWait(
-            interestedPOI, new AdvertisementGenerationRequest(), 30000, TimeUnit.MILLISECONDS, 1000);
+            interestedPOI,
+            new AdvertisementGenerationRequest(),
+            30000,
+            TimeUnit.MILLISECONDS,
+            1000);
 
     KafkaSink<Tuple2<Integer, String>> kafkaSink =
         KafkaSink.<Tuple2<Integer, String>>builder()

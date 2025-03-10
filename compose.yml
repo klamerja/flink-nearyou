@@ -33,16 +33,6 @@ services:
     volumes:
       - ./create.sql:/docker-entrypoint-initdb.d/create.sql
 
-  pgadmin:
-    image: dpage/pgadmin4
-    container_name: pgadmin4_container
-    restart: always
-    ports:
-      - "8888:80"
-    environment:
-      PGADMIN_DEFAULT_EMAIL: sweat.unipd@gmail.com
-      PGADMIN_DEFAULT_PASSWORD: Admin12!
-
   grafana:
     image: grafana/grafana
     restart: always

@@ -6,15 +6,15 @@ import org.apache.flink.shaded.jackson2.com.fasterxml.jackson.databind.ObjectMap
 import org.apache.flink.shaded.jackson2.com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class AdvertisementSerializationSchema implements SerializationSchema<Tuple2<Integer, String>> {
-  private static final ObjectMapper mapper = new ObjectMapper();
+  private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Override
     public byte[] serialize(Tuple2<Integer, String> integerStringTuple2) {
         try {
-            ObjectNode node = mapper.createObjectNode();
+            ObjectNode node = MAPPER.createObjectNode();
             node.put("rent_id",integerStringTuple2.f0);
             node.put("adv",integerStringTuple2.f1);
-            return mapper.writeValueAsBytes(node);
+            return MAPPER.writeValueAsBytes(node);
         } catch (Exception e) {
             throw new RuntimeException("Failed to serialize Tuple2 to JSON", e);
         }
